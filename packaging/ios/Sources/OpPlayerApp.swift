@@ -1,7 +1,9 @@
 import SwiftUI
+import UIKit
 
 @main
 struct OpenPencilPlayerApp: App {
+    @StateObject private var deletion = AccountDeletionCoordinator.shared
     var body: some Scene {
         WindowGroup {
             // Edge-to-edge: the Metal view spans the full screen; the
@@ -9,8 +11,20 @@ struct OpenPencilPlayerApp: App {
             // out against the usable rectangle. Include the keyboard region
             // explicitly so SwiftUI never resizes or lifts the whole editor;
             // docked keyboard occlusion is delivered through its own channel.
-            OpPlayerContainer()
-                .ignoresSafeArea(.all, edges: .all)
+            Group {
+                if deletion.gate == .editor {
+                    OpPlayerContainer().ignoresSafeArea(.all, edges: .all)
+                        .overlay {
+                            if deletion.isPreparingCleanup {
+                                AccountDeletionRecoveryView(coordinator: deletion)
+                                    .background(Color(UIColor.systemBackground))
+                            }
+                        }
+                } else {
+                    AccountDeletionRecoveryView(coordinator: deletion)
+                }
+            }
+                .onAppear { deletion.bootstrap() }
                 // Native provider sign-in SDKs (Douyin / Alipay) return via
                 // the app's URL schemes; whatever they do not consume routes
                 // through the universal-link handler.
@@ -31,7 +45,7 @@ struct OpenPencilPlayerApp: App {
     }
 }
 
-private struct OpPlayerContainer: UIViewRepresentable {
+private struct OpPlayerContainer: UIViewControllerRepresentable {
     /// Launch with `-editor` for the full desktop chrome (default), or
     /// `-viewer` for the bare document viewer.
     private static let editorMode: Bool = {
@@ -40,15 +54,20 @@ private struct OpPlayerContainer: UIViewRepresentable {
         return true
     }()
 
-    func makeUIView(context: Context) -> OpPlayerView {
-        OpPlayerView(editorMode: Self.editorMode)
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let editor = OpToolDockController(editorMode: Self.editorMode)
+        AccountDeletionCoordinator.shared.register(editor.playerView)
+        let navigation = UINavigationController(rootViewController: editor)
+        navigation.setNavigationBarHidden(true, animated: false)
+        navigation.setToolbarHidden(true, animated: false)
+        return navigation
     }
 
-    func updateUIView(_ view: OpPlayerView, context: Context) {
-        view.setNeedsLayout()
+    func updateUIViewController(_ navigation: UINavigationController, context: Context) {
+        (navigation.viewControllers.first as? OpToolDockController)?.playerView.setNeedsLayout()
     }
 
-    static func dismantleUIView(_ view: OpPlayerView, coordinator: ()) {
-        view.teardownEngine()
+    static func dismantleUIViewController(_ navigation: UINavigationController, coordinator: ()) {
+        (navigation.viewControllers.first as? OpToolDockController)?.playerView.teardownEngine()
     }
 }

@@ -21,6 +21,19 @@ const AUTO_FINALIZE_ENV: &str = "OPENPENCIL_MCP_AUTO_FINALIZE";
 const AUTO_FINALIZE_IDLE_SECS_ENV: &str = "OPENPENCIL_MCP_AUTO_FINALIZE_IDLE_SECS";
 const DEFAULT_IDLE_AFTER: Duration = Duration::from_secs(45);
 
+/// Whether a write by `tool` leaves a generated design for the idle /
+/// session-end finalize to repair. Only the design-generation tools do:
+/// a plain node edit (`insert_node`, `update_node`, `op insert` / `op
+/// update`) is the author's exact intent, and finalizing it on `op stop`
+/// rewrote the file with roles, wrappers and resolved variable values
+/// nobody asked for (issue #269).
+pub(super) fn arms_auto_finalize(tool: &str) -> bool {
+    matches!(
+        tool,
+        "batch_design" | "design_skeleton" | "design_content" | "design_refine"
+    )
+}
+
 /// Tracks the last file-backed MCP write and prevents repeated finalization
 /// of the same document revision.
 pub struct AutoFinalize {
@@ -86,6 +99,7 @@ impl AutoFinalize {
     pub fn note_finalize(&mut self, revision: u64) {
         if self.enabled() {
             self.finalized_at_revision = Some(revision);
+            self.last_write_at = None;
         }
     }
 
@@ -118,6 +132,7 @@ impl AutoFinalize {
         *state = recorded.state;
         let finalized_revision = state.document_revision();
         self.finalized_at_revision = Some(finalized_revision);
+        self.last_write_at = None;
         eprintln!(
             "openpencil-desktop mcp: auto-finalize ({reason}) repairs={} revision={finalized_revision}",
             summary.total_repairs()
@@ -127,6 +142,24 @@ impl AutoFinalize {
 
     fn enabled(&self) -> bool {
         self.idle_after != Duration::MAX
+    }
+}
+
+#[cfg(test)]
+mod finalize_barrier_tests {
+    use super::*;
+    #[test]
+    fn explicit_finalize_does_not_rearm_after_a_precise_audio_or_geometry_edit() {
+        let now = Instant::now();
+        let mut finalize = AutoFinalize::for_test(Duration::ZERO);
+        finalize.note_write(now);
+        assert!(finalize.due(now, 1));
+        finalize.note_finalize(1);
+        assert!(!finalize.due(now, 2));
+        assert!(!arms_auto_finalize("import_audio"));
+        assert!(!arms_auto_finalize("generate_voiceover"));
+        finalize.note_write(now);
+        assert!(finalize.due(now, 3));
     }
 }
 
@@ -220,6 +253,14 @@ pub(super) fn run_http(
         }
         match listener.accept() {
             Ok((mut stream, _)) => {
+                // BSD/macOS `accept` inherits the listener's non-blocking
+                // flag. A non-blocking stream fails `write_all` with
+                // `WouldBlock` once the send buffer fills, truncating any
+                // large reply (a 2x PNG export) mid-body — issue #279.
+                if let Err(error) = stream.set_nonblocking(false) {
+                    eprintln!("openpencil-desktop --mcp-http: set blocking stream: {error}");
+                    continue;
+                }
                 let _ = stream.set_read_timeout(Some(HTTP_IO_TIMEOUT));
                 let _ = stream.set_write_timeout(Some(HTTP_IO_TIMEOUT));
                 match serve_http_connection(

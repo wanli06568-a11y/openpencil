@@ -17,9 +17,19 @@ pinned-skia-binaries = ["skia-safe/no-compile"]
 [dependencies]
 op-editor-core = { path = "../op-editor-core" }
 op-editor-ui = { path = "../op-editor-ui" }
+op-motion-export = { path = "../op-motion-export" }
 op-host-native = { path = "../op-host-native", default-features = false }
 op-pen-loader = { path = "../op-pen-loader" }
+jian-core = { path = "../../vendor/jian/crates/jian-core" }
+jian-ops-schema = { path = "../../vendor/jian/crates/jian-ops-schema" }
+jian-scene = { path = "../../vendor/jian/crates/jian-scene" }
+gif = "0.14"
+png = "0.18"
+zip = { version = "9", default-features = false }
 glam = { version = "0.29", default-features = false, features = ["std"] }
+serde_json = { workspace = true }
+base64 = "0.22"
+usvg = { version = "0.48", default-features = false }
 skia-safe = { version = "0.97.0", default-features = false, features = [
   "binary-cache",
   "textlayout",
@@ -27,5 +37,12 @@ skia-safe = { version = "0.97.0", default-features = false, features = [
 ] }
 
 [dev-dependencies]
-base64 = "0.22"
-jian-ops-schema = { path = "../../vendor/jian/crates/jian-ops-schema" }
+op-preview-core = { path = "../op-preview-core" }
+
+[target.'cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))'.dependencies]
+op-audio = { path = "../op-audio" }
+
+[target.'cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))'.dev-dependencies]
+mp4 = "0.14.0"
+rusty_h264-common = { version = "0.17.2", default-features = false, features = ["std"] }
+rusty_h264-decoder = { version = "0.17.2", default-features = false, features = ["std"] }

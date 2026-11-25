@@ -237,6 +237,9 @@ fn build_container_node(
     let (state, bindings, events) = parse_interactivity(obj);
 
     let container = ContainerProps {
+        audio_tracks: obj
+            .get("audioTracks")
+            .and_then(|v| serde_json::from_value(v.clone()).ok()),
         width,
         height,
         layout,
@@ -346,7 +349,7 @@ fn build_text_node(
         height,
         content,
         font_family: None,
-        font_size,
+        font_size: font_size.map(Into::into),
         font_weight,
         font_style: None,
         letter_spacing: None,

@@ -359,21 +359,15 @@ impl WidgetHostNative {
                 return true;
             }
         }
-        if self.editor_state.editor_ui.locale_picker.open {
-            use op_editor_ui::widgets::locale_picker::LocalePicker;
-            self.refresh_layout_scene();
-            let panel = self.locale_picker_rect(self.last_viewport_w);
-            let picker = LocalePicker::for_editor_ui(&self.editor_state.editor_ui);
-            let new_hover = match picker.hit_popup(panel, Point2D::new(x, y)) {
-                op_editor_ui::widgets::locale_picker::SelectHit::Row(idx) => Some(idx),
-                op_editor_ui::widgets::locale_picker::SelectHit::Inside
-                | op_editor_ui::widgets::locale_picker::SelectHit::Outside => None,
-            };
-            if new_hover != self.editor_state.editor_ui.locale_picker.hover {
-                self.editor_state.editor_ui.locale_picker.hover = new_hover;
-                self.mark_dirty();
-                return true;
-            }
+        if self.editor_state.editor_ui.locale_picker.open
+            && op_editor_ui::widgets::locale_picker::update_locale_picker_hover(
+                &mut self.editor_state,
+                self.last_viewport_w,
+                Point2D::new(x, y),
+            )
+        {
+            self.mark_dirty();
+            return true;
         }
         if self.editor_state.editor_ui.shape_picker.open {
             use op_editor_ui::widgets::shape_picker::ShapePicker;

@@ -150,7 +150,7 @@ dependencies = [
  "lru",
  "rand 0.8.6",
  "reqwest 0.13.3",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "schemars 1.2.1",
  "serde",
  "serde_json",
@@ -175,7 +175,7 @@ dependencies = [
  "futures",
  "futures-concurrency",
  "rustc-hash",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "schemars 1.2.1",
  "serde",
  "serde_json",
@@ -393,9 +393,9 @@ dependencies = [
 
 [[package]]
 name = "async-executor"
-version = "1.14.0"
+version = "1.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c96bf972d85afc50bf5ab8fe2d54d1586b4e0b46c97c50a0c9e71e2f7bcd812a"
+checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
 dependencies = [
  "async-task",
  "concurrent-queue",
@@ -429,7 +429,7 @@ dependencies = [
  "futures-lite",
  "parking",
  "polling",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "slab",
  "windows-sys 0.61.2",
 ]
@@ -510,7 +510,7 @@ dependencies = [
  "cfg-if",
  "event-listener",
  "futures-lite",
- "rustix 1.1.4",
+ "rustix 1.1.6",
 ]
 
 [[package]]
@@ -536,7 +536,7 @@ dependencies = [
  "cfg-if",
  "futures-core",
  "futures-io",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "signal-hook-registry",
  "slab",
  "windows-sys 0.61.2",
@@ -951,6 +951,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cast"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
+
+[[package]]
 name = "cbc"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1082,6 +1088,12 @@ checksum = "c0f78a02292a74a88ac736019ab962ece0bc380e3f977bf72e376c5d78ff0678"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "color_quant"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b"
 
 [[package]]
 name = "combine"
@@ -1964,9 +1976,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
 
 [[package]]
 name = "form_urlencoded"
-version = "1.2.2"
+version = "1.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
 dependencies = [
  "percent-encoding",
 ]
@@ -2117,7 +2129,7 @@ version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1bd49230192a3797a9a4d6abe9b3eed6f7fa4c8a8a4947977c6f80025f92cbd8"
 dependencies = [
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "windows-link",
 ]
 
@@ -2169,6 +2181,16 @@ checksum = "f0d8a4362ccb29cb0b265253fb0a2728f592895ee6854fd9bc13f2ffda266ff1"
 dependencies = [
  "opaque-debug",
  "polyval",
+]
+
+[[package]]
+name = "gif"
+version = "0.14.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
+dependencies = [
+ "color_quant",
+ "weezl",
 ]
 
 [[package]]
@@ -2389,9 +2411,9 @@ dependencies = [
 
 [[package]]
 name = "heapless"
-version = "0.8.0"
+version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
+checksum = "411fdef4df93751117bd9ef8caa0e7f99c65dafec5bd84313eb8e2fdd75e32f2"
 dependencies = [
  "hash32",
  "stable_deref_trait",
@@ -2861,6 +2883,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "jian-host-web"
+version = "0.0.1"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "jian-core",
+ "js-sys",
+ "serde",
+ "serde_json",
+ "ttf-parser",
+ "url",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
 name = "jian-ops-schema"
 version = "0.0.1"
 dependencies = [
@@ -2875,8 +2914,10 @@ dependencies = [
 name = "jian-scene"
 version = "0.0.1"
 dependencies = [
+ "jian-core",
  "jian-ops-schema",
  "jian-widgets",
+ "serde_json",
 ]
 
 [[package]]
@@ -3203,9 +3244,9 @@ dependencies = [
 
 [[package]]
 name = "libz-sys"
-version = "1.1.28"
+version = "1.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc3a226e576f50782b3305c5ccf458698f92798987f551c6a02efe8276721e22"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 dependencies = [
  "cc",
  "libc",
@@ -3372,6 +3413,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "minicov"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3aa3aa12b448ac225b3102217d1ac5cc717908f02722926524b0599c933c7a0"
+dependencies = [
+ "cc",
+ "walkdir",
+]
+
+[[package]]
 name = "minimal-lexical"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3407,6 +3458,20 @@ checksum = "bb85c154ba489f01b25c0d36ae69a87e4a1c73a72631fc6c0eb6dde34a73e44b"
 dependencies = [
  "num-traits",
  "pxfm",
+]
+
+[[package]]
+name = "mp4"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9ef834d5ed55e494a2ae350220314dc4aacd1c43a9498b00e320e0ea352a5c3"
+dependencies = [
+ "byteorder",
+ "bytes",
+ "num-rational",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -3673,6 +3738,7 @@ dependencies = [
  "num-bigint",
  "num-integer",
  "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -4023,8 +4089,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
+name = "oorandom"
+version = "11.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
+
+[[package]]
 name = "op-acp"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "agent-client-protocol",
  "futures-util",
@@ -4044,14 +4116,14 @@ dependencies = [
 
 [[package]]
 name = "op-ai"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "serde_json",
 ]
 
 [[package]]
 name = "op-ai-skills"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "include_dir",
  "jian-core",
@@ -4061,8 +4133,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "op-audio"
+version = "0.8.6"
+dependencies = [
+ "base64 0.22.1",
+ "jian-core",
+ "jian-ops-schema",
+ "op-editor-core",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "op-auth-bridge"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "ed25519-dalek",
@@ -4076,7 +4160,7 @@ dependencies = [
 
 [[package]]
 name = "op-brand"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "image",
  "jian-ops-schema",
@@ -4086,7 +4170,7 @@ dependencies = [
 
 [[package]]
 name = "op-builtin-model-discovery"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "futures",
  "op-editor-core",
@@ -4097,7 +4181,7 @@ dependencies = [
 
 [[package]]
 name = "op-chat-agent"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "futures",
@@ -4120,7 +4204,7 @@ dependencies = [
 
 [[package]]
 name = "op-chrome-extension-core"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jian-ops-schema",
  "op-html",
@@ -4132,7 +4216,7 @@ dependencies = [
 
 [[package]]
 name = "op-cli"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "jian-ops-schema",
@@ -4151,9 +4235,10 @@ dependencies = [
 
 [[package]]
 name = "op-codegen"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
+ "jian-core",
  "jian-ops-schema",
  "op-ai",
  "op-editor-core",
@@ -4165,7 +4250,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "blake3",
  "jian-ops-schema",
@@ -4179,7 +4264,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-host"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "ed25519-dalek",
@@ -4210,7 +4295,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-policy-file"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -4226,7 +4311,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-client"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "futures-util",
  "op-collab-relay-protocol",
@@ -4242,7 +4327,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-control-plane"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "ed25519-dalek",
  "getrandom 0.3.4",
@@ -4257,7 +4342,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-locator-hsm"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "cryptoki",
@@ -4275,7 +4360,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-locator-server"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "axum",
  "base64 0.22.1",
@@ -4304,7 +4389,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-protocol"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -4319,7 +4404,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-relay-server"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -4345,7 +4430,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-smoke"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -4358,7 +4443,7 @@ dependencies = [
 
 [[package]]
 name = "op-collab-transport"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "core-foundation 0.9.4",
@@ -4384,7 +4469,7 @@ dependencies = [
 
 [[package]]
 name = "op-config-store"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "serde",
  "serde_json",
@@ -4392,7 +4477,7 @@ dependencies = [
 
 [[package]]
 name = "op-design-lint"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jian-ops-schema",
  "op-util",
@@ -4402,7 +4487,7 @@ dependencies = [
 
 [[package]]
 name = "op-editor-core"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "glam",
@@ -4420,7 +4505,7 @@ dependencies = [
 
 [[package]]
 name = "op-editor-host-core"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "dirs 5.0.1",
  "jian-ops-schema",
@@ -4441,7 +4526,7 @@ dependencies = [
 
 [[package]]
 name = "op-editor-ui"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "accesskit",
  "base64 0.22.1",
@@ -4462,7 +4547,7 @@ dependencies = [
 
 [[package]]
 name = "op-engine-ffi"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "futures",
  "jian-core",
@@ -4495,7 +4580,7 @@ dependencies = [
 
 [[package]]
 name = "op-engine-jni"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jni 0.21.1",
  "ndk-sys",
@@ -4505,7 +4590,7 @@ dependencies = [
 
 [[package]]
 name = "op-engine-napi"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "napi-derive-ohos",
  "napi-ohos",
@@ -4515,7 +4600,7 @@ dependencies = [
 
 [[package]]
 name = "op-figma"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "flate2",
@@ -4530,7 +4615,7 @@ dependencies = [
 
 [[package]]
 name = "op-git"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "git2",
  "op-config-store",
@@ -4541,7 +4626,7 @@ dependencies = [
 
 [[package]]
 name = "op-host-desktop"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "accesskit",
  "accesskit_macos",
@@ -4569,6 +4654,7 @@ dependencies = [
  "op-acp",
  "op-ai",
  "op-ai-skills",
+ "op-audio",
  "op-auth-bridge",
  "op-codegen",
  "op-collab",
@@ -4615,7 +4701,7 @@ dependencies = [
 
 [[package]]
 name = "op-host-native"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "accesskit",
  "casement",
@@ -4649,7 +4735,7 @@ dependencies = [
 
 [[package]]
 name = "op-host-services"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "agent",
  "anthropic-agent-sdk",
@@ -4668,6 +4754,7 @@ dependencies = [
  "op-acp",
  "op-ai",
  "op-ai-skills",
+ "op-audio",
  "op-auth-bridge",
  "op-brand",
  "op-builtin-model-discovery",
@@ -4703,14 +4790,16 @@ dependencies = [
 
 [[package]]
 name = "op-host-web"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "accesskit",
  "base64 0.22.1",
  "console_error_panic_hook",
  "jian-core",
+ "jian-host-web",
  "jian-ops-schema",
  "js-sys",
+ "mp4",
  "op-ai",
  "op-codegen",
  "op-editor-core",
@@ -4720,6 +4809,7 @@ dependencies = [
  "op-host-native",
  "op-html",
  "op-i18n",
+ "op-motion-export",
  "op-pen-loader",
  "op-preview-core",
  "op-util",
@@ -4730,12 +4820,13 @@ dependencies = [
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "wasm-bindgen-test",
  "web-sys",
 ]
 
 [[package]]
 name = "op-host-web-server"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "op-host-services",
  "serde_json",
@@ -4743,7 +4834,7 @@ dependencies = [
 
 [[package]]
 name = "op-hosted-models"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "futures",
  "getrandom 0.3.4",
@@ -4761,7 +4852,7 @@ dependencies = [
 
 [[package]]
 name = "op-html"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "encoding_rs",
@@ -4777,14 +4868,14 @@ dependencies = [
 
 [[package]]
 name = "op-i18n"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "op-html",
 ]
 
 [[package]]
 name = "op-image-enrich"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "image",
@@ -4800,7 +4891,7 @@ dependencies = [
 
 [[package]]
 name = "op-mcp"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "image",
@@ -4824,8 +4915,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "op-motion-export"
+version = "0.8.6"
+dependencies = [
+ "glam",
+ "jian-core",
+ "jian-scene",
+ "mp4",
+ "op-editor-core",
+ "op-editor-ui",
+ "rusty_h264-common",
+ "rusty_h264-encoder",
+]
+
+[[package]]
 name = "op-opmerge"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jian-ops-schema",
  "serde_json",
@@ -4834,7 +4939,7 @@ dependencies = [
 
 [[package]]
 name = "op-orchestrator"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
  "futures",
@@ -4861,7 +4966,7 @@ dependencies = [
 
 [[package]]
 name = "op-pen-loader"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jian-core",
  "jian-ops-schema",
@@ -4877,7 +4982,7 @@ dependencies = [
 
 [[package]]
 name = "op-preview-contracts"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "serde",
  "serde_json",
@@ -4886,10 +4991,11 @@ dependencies = [
 
 [[package]]
 name = "op-preview-core"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "jian-core",
  "jian-ops-schema",
+ "jian-scene",
  "jian-skia",
  "op-editor-core",
  "op-editor-ui",
@@ -4903,7 +5009,7 @@ dependencies = [
 
 [[package]]
 name = "op-process-io"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "libc",
  "tokio",
@@ -4911,21 +5017,34 @@ dependencies = [
 
 [[package]]
 name = "op-render-export"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "base64 0.22.1",
+ "gif",
  "glam",
+ "jian-core",
  "jian-ops-schema",
+ "jian-scene",
+ "mp4",
+ "op-audio",
  "op-editor-core",
  "op-editor-ui",
  "op-host-native",
+ "op-motion-export",
  "op-pen-loader",
+ "op-preview-core",
+ "png 0.18.1",
+ "rusty_h264-common",
+ "rusty_h264-decoder",
+ "serde_json",
  "skia-safe",
+ "usvg",
+ "zip",
 ]
 
 [[package]]
 name = "op-rpc-transport"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "serde",
  "serde_json",
@@ -4933,7 +5052,7 @@ dependencies = [
 
 [[package]]
 name = "op-smoke"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "agent",
  "futures",
@@ -4956,11 +5075,11 @@ dependencies = [
 
 [[package]]
 name = "op-util"
-version = "0.8.5"
+version = "0.8.6"
 
 [[package]]
 name = "op-web-sdk"
-version = "0.8.5"
+version = "0.8.6"
 dependencies = [
  "console_error_panic_hook",
  "jian-ops-schema",
@@ -5054,6 +5173,15 @@ checksum = "a570f6bca41d29acb2139229a7c873ec99bc9a313bd10804081d89bfac8ff329"
 dependencies = [
  "libc",
  "libredox",
+]
+
+[[package]]
+name = "ordered-float"
+version = "5.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f59006ce1e204c30956638535b74d317bca99477b9356dfaec54c37f6f600ab"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
@@ -5322,7 +5450,7 @@ dependencies = [
  "concurrent-queue",
  "hermit-abi",
  "pin-project-lite",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "windows-sys 0.61.2",
 ]
 
@@ -5945,12 +6073,13 @@ dependencies = [
 
 [[package]]
 name = "rstar"
-version = "0.12.2"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb"
+checksum = "d95c33d01e9acee7be3363f99e9ef88b1a587186e81e03843fbe39d77d9a0c1f"
 dependencies = [
  "heapless",
  "num-traits",
+ "ordered-float",
  "smallvec",
 ]
 
@@ -5984,9 +6113,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "1.1.4"
+version = "1.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
 dependencies = [
  "bitflags 2.11.1",
  "errno",
@@ -6078,6 +6207,44 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
+name = "rusty_h264-accel"
+version = "0.17.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9d3fb461fb65d2f57e39101d25334da69157006025908cb9d1fe5e4b06d359e"
+
+[[package]]
+name = "rusty_h264-common"
+version = "0.17.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e580674b3f5bc31557bacfad50aff5cef898867c55c707f50c4d100814477429"
+dependencies = [
+ "bytemuck",
+ "once_cell",
+ "portable-atomic",
+ "rusty_h264-accel",
+ "wide",
+]
+
+[[package]]
+name = "rusty_h264-decoder"
+version = "0.17.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "094423de82effaf636b119c9f4dc05c9137a54322c39b144a1776069740df87f"
+dependencies = [
+ "rusty_h264-common",
+]
+
+[[package]]
+name = "rusty_h264-encoder"
+version = "0.17.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e71505e23dfe2ed74dba77c236eeb70a09f7c4d6d9f7ee834aa0a4f453dce83"
+dependencies = [
+ "rusty_h264-accel",
+ "rusty_h264-common",
+]
+
+[[package]]
 name = "ruzstd"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6091,6 +6258,15 @@ name = "ryu"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
+name = "safe_arch"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96b02de82ddbe1b636e6170c21be622223aea188ef2e139be0a5b219ec215323"
+dependencies = [
+ "bytemuck",
+]
 
 [[package]]
 name = "same-file"
@@ -6858,7 +7034,7 @@ dependencies = [
  "fastrand",
  "getrandom 0.4.2",
  "once_cell",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "windows-sys 0.61.2",
 ]
 
@@ -7468,9 +7644,9 @@ dependencies = [
 
 [[package]]
 name = "url"
-version = "2.5.8"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 dependencies = [
  "form_urlencoded",
  "idna",
@@ -7651,6 +7827,45 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-bindgen-test"
+version = "0.3.67"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "941c102b3f0c15b6d72a53205e09e6646aafcf2991e18412cc331dbac1806bc0"
+dependencies = [
+ "async-trait",
+ "cast",
+ "js-sys",
+ "libm",
+ "minicov",
+ "nu-ansi-term",
+ "num-traits",
+ "oorandom",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-bindgen-test-macro",
+ "wasm-bindgen-test-shared",
+]
+
+[[package]]
+name = "wasm-bindgen-test-macro"
+version = "0.3.67"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a26bd6570f39bb1440fd8f01b63461faaf2a3f6078a508e4e54efa99363108d2"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "wasm-bindgen-test-shared"
+version = "0.2.117"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c29582b14d5bf030b02fa232b9b57faf2afc322d2c61964dd80bad02bf76207"
+
+[[package]]
 name = "wasm-encoder"
 version = "0.244.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7718,7 +7933,7 @@ checksum = "2857dd20b54e916ec7253b3d6b4d5c4d7d4ca2c33c2e11c6c76a99bd8744755d"
 dependencies = [
  "cc",
  "downcast-rs",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "scoped-tls",
  "smallvec",
  "wayland-sys",
@@ -7731,7 +7946,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "645c7c96bb74690c3189b5c9cb4ca1627062bb23693a4fad9d8c3de958260144"
 dependencies = [
  "bitflags 2.11.1",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "wayland-backend",
  "wayland-scanner",
 ]
@@ -7753,7 +7968,7 @@ version = "0.31.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4a52d18780be9b1314328a3de5f930b73d2200112e3849ca6cb11822793fb34d"
 dependencies = [
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "wayland-client",
  "xcursor",
 ]
@@ -7879,6 +8094,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81995fafaaaf6ae47a7d0cc83c67caf92aeb7e5331650ae6ff856f7c0c60c459"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "wide"
+version = "0.7.33"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ce5da8ecb62bcd8ec8b7ea19f69a51275e91299be594ea5cc6ef7819e16cd03"
+dependencies = [
+ "bytemuck",
+ "safe_arch",
 ]
 
 [[package]]
@@ -8513,7 +8738,7 @@ dependencies = [
  "libc",
  "log",
  "os_pipe",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "thiserror 2.0.18",
  "tree_magic_mini",
  "wayland-backend",
@@ -8550,7 +8775,7 @@ dependencies = [
  "libc",
  "libloading 0.8.9",
  "once_cell",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "x11rb-protocol",
 ]
 
@@ -8579,7 +8804,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32e45ad4206f6d2479085147f02bc2ef834ac85886624a23575ae137c8aa8156"
 dependencies = [
  "libc",
- "rustix 1.1.4",
+ "rustix 1.1.6",
 ]
 
 [[package]]
@@ -8717,7 +8942,7 @@ dependencies = [
  "hex",
  "libc",
  "ordered-stream",
- "rustix 1.1.4",
+ "rustix 1.1.6",
  "serde",
  "serde_repr",
  "tracing",

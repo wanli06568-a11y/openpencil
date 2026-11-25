@@ -33,7 +33,22 @@ impl DesktopApp {
     /// render context yet) — the dispatcher then skips its post-event
     /// epilogue, exactly as the inlined `return` did.
     pub(super) fn on_redraw_requested(&mut self, event_loop: &ActiveEventLoop) -> bool {
+        let now_ms = self.clock_start.elapsed().as_millis() as u64;
+        if self
+            .audio_preview
+            .poll(&mut self.host, self.mcp_wake_proxy.clone(), now_ms)
+        {
+            self.redraw_dirty = true;
+        }
+        if crate::voiceover_host::drain(self) {
+            self.redraw_dirty = true;
+        }
         crate::prompt_center_store::flush_user_prompts_if_dirty(&mut self.host);
+        // Preview `copy` effects delivered during the previous paint (a
+        // chained copy after a toast, say) land here.
+        if let Some(text) = self.host.editor_state_mut().chat.pending_copy_text.take() {
+            crate::clipboard::set_text(&text);
+        }
         if (self.ctx.is_none() || self.backend.is_none())
             && !self.try_init_render_context(event_loop)
         {

@@ -10,6 +10,11 @@ Gestures are interpreted by the engine, not the shell: single-finger tap selects
 
 Sign-in is platform-native: the engine's device-login flow hands its verification URL to a UIKit screen that performs email/password sign-in against the regional SSO JSON API and approves the pairing directly, while third-party providers stay inside the app: Apple runs the native AuthenticationServices sheet and exchanges its nonce-bound identity token at `POST /api/v1/auth/providers/apple/native-login` (a failure surfaces an inline error — the web page is never involved), and the other providers open the pairing login page in an in-app Safari sheet deep-linked to the tapped provider — the running pairing is approved there. Registration and password recovery are native sibling screens. The Account tile opens a native account center backed by the engine's read-only profile snapshot (the private auth runtime never exposes its device token). The third-party buttons are region-accurate: the login screen fetches `GET /api/v1/auth/providers?channel=web_mobile` from the pairing's origin, so the mainland site lists WeChat / Alipay / Douyin and the global site lists Apple / GitHub / Google without a hardcoded table. The sign-in region (Mainland China `sso.zseven.cn` / Global `sso.zseven.tech`) resolves from a persisted user choice, then an IP-informed probe of the global gateway's mainland redirect, then the device locale; changes apply on the next launch because the auth runtime initializes once per process.
 
+The login, registration, and account screens expose the regional iOS privacy
+policy in an in-app Safari sheet. Account management and privacy links follow
+the active authentication region even after the user saves a different
+next-launch preference. Region selection does not terminate the app.
+
 ## Build inputs
 
 From the repository root, build the archive matching the destination if it is
@@ -71,6 +76,15 @@ hardening change requires a newly signed matrix and reviewed policy adoption.
 
 ## App Store / TestFlight release
 
+For Guideline 2.1 responses, fill in [AppReviewNotes.txt](AppReviewNotes.txt)
+and follow [AppReviewRecordingChecklist.md](AppReviewRecordingChecklist.md).
+These are preparation documents, not evidence of a completed review or
+physical-device QA. [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md) describes the
+OpenPencil-only deletion flow, preserved shared ZSeven data, and required
+service/auth-matrix rollout. That rollout and the missing review evidence
+must be completed before resubmission; source validation alone does not
+establish App Store readiness.
+
 The formal `v*` Rust release calls `.github/workflows/ios-app-store.yml` with
 the exact release ref and source commit. The iOS upload is intentionally
 independent of the GitHub Release asset job: an App Store Connect or review
@@ -96,6 +110,12 @@ entitlements, encryption declarations, and final upload result before it can
 report success. It uploads the build to App Store Connect/TestFlight but does
 not automatically submit a store review.
 
+App Store archives use the iOS 27.1 SDK or later so iPhone Duo can resize
+between its outer and inner displays. The app still deploys to iOS 15.
+When the inner display is partially folded, the editor uses one pane and
+the other shows a read-only preview of the active document page. Use Device Hub with the
+iPhone Duo simulator to check the closed, partially open, and open poses.
+
 Generate the project (do this again after changing `project.yml`):
 
 ```bash
@@ -113,7 +133,7 @@ xcodebuild \
   -project OpenPencilPlayer.xcodeproj \
   -scheme OpenPencilPlayer \
   -configuration Release \
-  -sdk iphonesimulator26.4 \
+  -sdk iphonesimulator \
   -destination 'platform=iOS Simulator,id=<sim-id>' \
   -derivedDataPath "$PWD/.derived-data" \
   HEADER_SEARCH_PATHS="$PWD/../../crates/op-engine-ffi/include" \
@@ -137,7 +157,7 @@ xcodebuild \
   -project OpenPencilPlayer.xcodeproj \
   -scheme OpenPencilPlayer \
   -configuration Release \
-  -sdk iphoneos26.4 \
+  -sdk iphoneos \
   -destination 'platform=iOS,id=<device-id>' \
   -derivedDataPath "$PWD/.derived-data-device" \
   HEADER_SEARCH_PATHS="$PWD/../../crates/op-engine-ffi/include" \

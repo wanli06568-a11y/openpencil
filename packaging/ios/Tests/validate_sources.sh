@@ -46,6 +46,12 @@ required=(
   "$player_dir/Sources/RegisterViewController.swift"
   "$player_dir/Sources/AuthTheme.swift"
   "$player_dir/Sources/AccountCenterViewController.swift"
+  "$player_dir/Sources/AccountDeletionState.swift"
+  "$player_dir/Sources/AccountDeletionCoordinator.swift"
+  "$player_dir/Sources/AccountDeletionViewController.swift"
+  "$player_dir/Sources/AccountDeletionRecoveryView.swift"
+  "$player_dir/Sources/AccountDeletionText.swift"
+  "$player_dir/Sources/OpPlayerView+AccountDeletion.swift"
   "$player_dir/Sources/SsoAuthClient.swift"
   "$player_dir/Sources/SsoProviderList.swift"
   "$player_dir/Sources/SsoRegion.swift"
@@ -240,7 +246,7 @@ raise "AppIcon must be 1024x1024" unless width == 1024 && height == 1024
 raise "AppIcon must be 8-bit opaque RGB" unless bit_depth == 8 && color_type == 2
 RUBY
 
-grep -Fq -- "-sdk iphonesimulator26.4" "$player_dir/README.md"
+grep -Fq -- "-sdk iphonesimulator" "$player_dir/README.md"
 grep -Fq -- "-destination 'platform=iOS Simulator,id=<sim-id>'" "$player_dir/README.md"
 grep -Fq -- "aarch64-apple-ios-sim/release/libop_engine_ffi.a -lc++" "$player_dir/README.md"
 grep -Fq -- "aarch64-apple-ios/release/libop_engine_ffi.a -lc++" "$player_dir/README.md"
@@ -287,7 +293,7 @@ grep -Fq -- 'viewportConvergence.displayFrame' "$player_dir/Sources/OpPlayerView
 grep -Fq -- 'geometryGate.isPending || !suppressedTouches.isEmpty' "$player_dir/Sources/OpPlayerView.swift"
 grep -Fq -- 'suppressedTouches.suppress(touchIDs.keys)' "$player_dir/Sources/OpPlayerView.swift"
 grep -Fq -- 'safeArea: UIEdgeInsets(' "$player_dir/Sources/OpPlayerView.swift"
-grep -Fq -- 'op_resize_with_safe_area(' "$player_dir/Sources/OpEngineHost.swift"
+grep -Fq -- 'op_resize_with_fold_preview(' "$player_dir/Sources/OpEngineHost.swift"
 if grep -Fq -- 'op_set_safe_area(engine' "$player_dir/Sources/OpEngineHost.swift"; then
   echo "iOS viewport updates must not split size and safe-area mutations" >&2
   exit 1
@@ -622,6 +628,19 @@ xcrun swiftc \
 "$reader_test"
 
 keyboard_test="$reader_test_dir/keyboard-occlusion-runner"
+deletion_test="$reader_test_dir/account-deletion-state-runner"
+xcrun swiftc -warnings-as-errors -parse-as-library \
+  "$player_dir/Sources/AccountDeletionState.swift" \
+  "$player_dir/Tests/AccountDeletionStateTests.swift" \
+  -o "$deletion_test"
+"$deletion_test"
+save_queue_test="$reader_test_dir/document-save-work-queue-runner"
+xcrun swiftc -warnings-as-errors -parse-as-library \
+  "$player_dir/Sources/DocumentSaveWorkQueue.swift" \
+  "$player_dir/Tests/DocumentSaveWorkQueueTests.swift" \
+  -o "$save_queue_test"
+"$save_queue_test"
+
 xcrun swiftc \
   -warnings-as-errors \
   -parse-as-library \

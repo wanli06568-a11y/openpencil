@@ -7,15 +7,19 @@ final class OpEngineHost: NSObject {
     weak var view: OpPlayerView?
     var authStorageURL: URL?
     var authConfigured = false
-
+    // Account links must follow the running auth session, not next-launch preferences.
+    var activeAuthRegion: SsoRegion?
     private(set) var engine: OpaquePointer?
+    let remoteImageSession = AppPrivateNetworking.makeSession()
     private weak var surfaceLayer: CAMetalLayer?
     private var logicalSize = CGSize.zero
     private var scale: CGFloat = 1
+    private var foldPreview: CGRect?
     private var viewportInsets = ViewportInsets(top: 0, right: 0, bottom: 0, left: 0)
     private var viewportSynchronized = false
     private var isSuspended = false
     private var isAlive = true
+    private(set) var teardownSucceeded = true
     private var displayLink: CADisplayLink?
     private let displayLinkTarget = OpDisplayLinkTarget()
     private var observers: [NSObjectProtocol] = []
@@ -25,7 +29,6 @@ final class OpEngineHost: NSObject {
     private lazy var chatAttachmentCoordinator = ChatAttachmentCoordinator(host: self)
     // Internal (not private) so OpEngineHost+Pointer.swift's `editor*At` wrappers can observe engine work.
     lazy var generationBackgroundCoordinator = GenerationBackgroundCoordinator(host: self)
-    /// Editor mode (full desktop chrome) vs bare viewer.
     let editorMode: Bool
     private var imeFocused = false
     private var prefersLightSystemIcons: Bool?
@@ -62,6 +65,7 @@ final class OpEngineHost: NSObject {
     }
 
     deinit {
+        remoteImageSession.invalidateAndCancel()
         displayLink?.invalidate()
         observers.forEach(NotificationCenter.default.removeObserver)
     }
@@ -70,7 +74,8 @@ final class OpEngineHost: NSObject {
         surface: CAMetalLayer,
         logicalSize size: CGSize,
         scale newScale: CGFloat,
-        safeArea insets: UIEdgeInsets
+        safeArea insets: UIEdgeInsets,
+        foldPreview preview: CGRect?
     ) -> Bool {
         precondition(Thread.isMainThread)
         guard isAlive, size.width > 0, size.height > 0, newScale > 0 else { return false }
@@ -86,11 +91,12 @@ final class OpEngineHost: NSObject {
             currentScale: scale,
             nextSize: size,
             nextScale: newScale
-        ) || viewportInsets != nextInsets
+        ) || viewportInsets != nextInsets || foldPreview != preview
         surfaceLayer = surface
         logicalSize = size
         scale = newScale
         viewportInsets = nextInsets
+        foldPreview = preview
 
         if engine == nil {
             createAndAttach(surface: surface)
@@ -104,9 +110,14 @@ final class OpEngineHost: NSObject {
         return true
     }
 
+    func quiesceDocumentSaves(completion: @escaping () -> Void) {
+        documentSaveCoordinator.quiesceForAccountDeletion(completion: completion)
+    }
+
     func teardown() {
         precondition(Thread.isMainThread)
         guard isAlive else { return }
+        remoteImageSession.invalidateAndCancel()
         displayLink?.isPaused = true
         displayLink?.invalidate()
         displayLink = nil
@@ -117,7 +128,6 @@ final class OpEngineHost: NSObject {
         generationBackgroundCoordinator.teardown()
 
         if let engine {
-            // A live press/move ladder must never cross the suspend barrier.
             cancelGesturesBeforeSuspend()
             let suspendStatus = op_suspend(engine)
             if suspendStatus != OpStatus_Ok {
@@ -126,6 +136,7 @@ final class OpEngineHost: NSObject {
             isSuspended = true
             let destroyStatus = op_destroy(engine)
             if destroyStatus != OpStatus_Ok {
+                teardownSucceeded = false
                 reportFailure(destroyStatus, operation: "op_destroy", engine: nil)
             }
             self.engine = nil
@@ -522,32 +533,6 @@ final class OpEngineHost: NSObject {
         UIPasteboard.general.string = text
     }
 
-    // MARK: - Remote images
-
-    /// `remote_image_request` upcall: the paint pass hit a remote image
-    /// miss; fetch the bytes and push them back into the engine.
-    func deferRemoteImageRequest(requestID: UInt64, url: String) {
-        guard engine != nil else { return }
-        guard let remoteURL = URL(string: url) else { return }
-        let task = URLSession.shared.dataTask(with: remoteURL) { [weak self] data, _, error in
-            guard let self, let engine = self.engine, let data, error == nil else { return }
-            let status = data.withUnsafeBytes { bytes in
-                op_remote_image_result(
-                    engine,
-                    requestID,
-                    bytes.bindMemory(to: UInt8.self).baseAddress,
-                    bytes.count
-                )
-            }
-            if status == OpStatus_Ok {
-                DispatchQueue.main.async { [weak self] in
-                    self?.requestImmediateFrame()
-                }
-            }
-        }
-        task.resume()
-    }
-
     // MARK: - Callbacks
 
     private func makeCallbacks() -> OpCallbacks {
@@ -570,18 +555,23 @@ final class OpEngineHost: NSObject {
             viewportSynchronized = false
             return false
         }
-        let status = op_resize_with_safe_area(
-            engine,
-            Float(logicalSize.width),
-            Float(logicalSize.height),
-            Float(scale),
-            Float(viewportInsets.top),
-            Float(viewportInsets.right),
-            Float(viewportInsets.bottom),
-            Float(viewportInsets.left)
+        let rect = foldPreview ?? .zero
+        var preview = OpFoldPreviewRect(
+            x: Float(rect.minX), y: Float(rect.minY),
+            width: Float(rect.width), height: Float(rect.height)
         )
+        let status = withUnsafePointer(to: &preview) { pointer in
+            op_resize_with_fold_preview(
+                engine, Float(logicalSize.width), Float(logicalSize.height), Float(scale),
+                OpInsets(
+                    top: Float(viewportInsets.top), right: Float(viewportInsets.right),
+                    bottom: Float(viewportInsets.bottom), left: Float(viewportInsets.left)
+                ),
+                foldPreview == nil ? nil : pointer
+            )
+        }
         if status != OpStatus_Ok {
-            reportFailure(status, operation: "op_resize_with_safe_area", engine: engine)
+            reportFailure(status, operation: "op_resize_with_fold_preview", engine: engine)
         }
         viewportSynchronized = status == OpStatus_Ok
         return viewportSynchronized
@@ -612,6 +602,7 @@ final class OpEngineHost: NSObject {
             syncImeFocus()
             drainCopyText()
             drainShellActions()
+            view?.toolDockController?.syncTools(using: engine)
         }
         syncSystemChromeStyle()
     }

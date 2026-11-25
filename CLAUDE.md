@@ -23,6 +23,7 @@ Tooling is **Cargo** (Rust — the product). The root has **no `package.json`**;
 - **CLI:** `cargo build -p op-cli` → binary `op`
 - **MCP server:** built into the desktop/web host (`--mcp <path>`); crate `op-mcp`
 - **Iconify catalog (Rust assets):** from `packages/`: `bun run generate-iconify-catalog`
+- **Duplication ratchet:** `python3 tools/check-duplication.py` (fails if cross-crate copy-paste grows); `--report` for offenders, `--update-baseline` after removing duplication
 - **Sync all managed versions:** `scripts/sync-version.sh` reads the canonical version from root `Cargo.toml`; verify without writing via `tools/check-version-sync.sh`
 
 ## Architecture
@@ -48,7 +49,15 @@ crates/
 packages/
 ├── op-web-sdk/           Read-only `.op` web viewer SDK (wraps the op-host-web wasm bundle)
 ├── op-web-sdk-react/     React 19 adapter for op-web-sdk
-└── op-web-sdk-vue/       Vue 3 adapter for op-web-sdk
+├── op-web-sdk-vue/       Vue 3 adapter for op-web-sdk
+├── op-vscode/            VS Code extension (`openpencil-vscode`)
+├── op-chrome-extension/  Chrome MV3 web-capture extension (Rust/wasm core)
+├── op-dsh/               DeepSeek Harness plugin (`@zseven-w/dsh-openpencil`, standalone pnpm)
+├── op-codex/             Codex plugin (`@zseven-w/codex-openpencil` + 6 platform npm packages, Node >= 22)
+├── op-workbuddy/         WorkBuddy connector (`@zseven-w/workbuddy-openpencil` + 6 platform npm packages, Node >= 22)
+├── op-qwenwork/          QwenWork (千问办公) connector & plugin kit (`@zseven-w/qwenwork-openpencil` + 6 platform npm packages, Node >= 22)
+├── op-qoder/             Qoder plugin & native MCP App canvas (`@zseven-w/qoder-openpencil` + 6 platform npm packages, Node >= 22)
+└── op-doubao/            Doubao Desktop (豆包办公) connector & skill packager (`@zseven-w/doubao-openpencil` + 6 platform npm packages, Node >= 22)
 ```
 
 Data flow, canvas engine, Document/EditorCommand model, MCP layered-design workflow, design variables, and the run/debug recipe are all documented in **`crates/CLAUDE.md`**.

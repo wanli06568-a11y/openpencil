@@ -195,7 +195,14 @@ pub use text::{
     op_text_backspace, op_text_begin, op_text_caret_rect, op_text_delete_forward, op_text_end,
     op_text_get_state, op_text_insert, op_text_select_range, op_text_set_caret,
 };
-pub use viewport::{op_get_pixel_size, op_set_keyboard, op_set_safe_area, OpInsets};
+#[cfg(feature = "editor")]
+pub use viewport::{
+    op_editor_native_dock_press, op_editor_native_dock_state, op_editor_native_shape_press,
+};
+pub use viewport::{
+    op_get_pixel_size, op_resize_with_fold_preview, op_set_keyboard, op_set_safe_area,
+    OpFoldPreviewRect, OpInsets,
+};
 
 use desc::{parse_create, surface_handle};
 use error::{clear_create_error, create_error, set_create_error, write_bytes, FfiError, FfiResult};
@@ -269,7 +276,8 @@ pub unsafe extern "C" fn op_destroy(engine: *mut OpEngine) -> OpStatus {
 ///
 /// # Safety
 ///
-/// A non-null `engine` must be live; output pointers must cover their sizes.
+/// A non-null `engine` must be live and called on its owner thread; output
+/// pointers must cover their sizes.
 #[no_mangle]
 pub unsafe extern "C" fn op_last_error(
     engine: *mut OpEngine,
@@ -290,6 +298,11 @@ pub unsafe extern "C" fn op_last_error(
         };
     }
     let engine = unsafe { &*engine };
+    // The error slot is a `RefCell` the owner writes after every failed
+    // call; reading it from another thread would race that write.
+    if !engine.on_owner_thread() {
+        return OpStatus::WrongThread;
+    }
     let message = engine.last_error();
     match unsafe { write_bytes(message.as_bytes(), buffer, length, required) } {
         Ok(()) => OpStatus::Ok,

@@ -5,7 +5,7 @@ phase: [generation]
 trigger:
   keywords: [shader, glsl, sksl, generative, noise, grain, turbulence, feTurbulence, aurora]
 priority: 28
-budget: 750
+budget: 800
 category: knowledge
 ---
 
@@ -37,6 +37,11 @@ fill: [{ type: "shader", sksl: "<SkSL source>", uniforms: { name: value, ... } }
   uniform also doubles as the visible fallback if compilation fails, so
   always include one.
 - Optional `opacity` (0..1) folds into the fill alpha.
+- Reserved uniforms, bound by the canvas (an authored value is replaced):
+  `uniform float2 size;` = node box in px; `uniform float time;` (or
+  `half time`) = elapsed seconds, so the fill ANIMATES on the canvas.
+  The open motion timeline binds its playhead, including pause and seek.
+  Motion export binds each frame's sample time. Static images use `time = 0`.
 
 KNOWN-GOOD SNIPPETS (copy verbatim, tweak colours via uniforms):
 
